@@ -1,47 +1,40 @@
 pipeline {
     agent any
-    
-    environment {
-        DOCKER_IMAGE = "foodmealhub"
-    }
 
     stages {
         stage('Checkout') {
             steps {
-                echo "Fetching code from GitHub..."
                 git 'https://github.com/mrudula-hingmire/food_order_system.git'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build') {
+            steps {
+                echo 'Building the project...'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+            }
+        }
+
+        stage('Docker Build & Push') {
             steps {
                 script {
-                    echo "Building Docker image..."
-                    sh 'docker build -t ${DOCKER_IMAGE}:latest .'
+                    echo 'Building Docker image...'
+                    sh 'docker build -t mrudula/food_order_system .'
+                    echo 'Pushing Docker image...'
+                    sh 'docker push mrudula/food_order_system'
                 }
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Deploy') {
             steps {
-                script {
-                    echo "Running container..."
-                    sh '''
-                    docker stop ${DOCKER_IMAGE} || true
-                    docker rm ${DOCKER_IMAGE} || true
-                    docker run -d -p 8081:80 --name ${DOCKER_IMAGE} ${DOCKER_IMAGE}:latest
-                    '''
-                }
+                echo 'Deploying application...'
             }
-        }
-    }
-
-    post {
-        success {
-            echo "✅ Deployment Successful! Visit http://localhost:8081"
-        }
-        failure {
-            echo "❌ Build failed! Check logs."
         }
     }
 }
