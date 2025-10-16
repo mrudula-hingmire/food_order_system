@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FoodMeal Hub - Menu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="cart.html">Cart</a>
+  </nav>
+
+  <div class="container">
+    <h1>🍽️ FoodMeal Hub</h1>
+    <h2>Our Menu</h2>
+    <div class="menu" id="menu"></div>
+  </div>
+
+  <script>
+    const menuItems = [
+      { id: 1, name: "Cheese Burger", price: 120, img: "https://source.unsplash.com/400x300/?burger" },
+      { id: 2, name: "Margherita Pizza", price: 250, img: "https://source.unsplash.com/400x300/?pizza" },
+      { id: 3, name: "Pasta Alfredo", price: 200, img: "https://source.unsplash.com/400x300/?pasta" },
+      { id: 4, name: "French Fries", price: 80, img: "https://source.unsplash.com/400x300/?fries" },
+      { id: 5, name: "Chocolate Cake", price: 150, img: "https://source.unsplash.com/400x300/?cake" },
+      { id: 6, name: "Cold Coffee", price: 100, img: "https://source.unsplash.com/400x300/?coffee" }
+    ];
+
+    const menuContainer = document.getElementById('menu');
+    menuItems.forEach(item => {
+      const card = document.createElement('div');
+      card.classList.add('card');
+      card.innerHTML = `
+        <img src="${item.img}" alt="${item.name}">
+        <h3>${item.name}</h3>
+        <p>₹${item.price}</p>
+        <button onclick="addToCart(${item.id})">Add to Cart</button>
+      `;
+      menuContainer.appendChild(card);
+    });
+
+    function addToCart(id) {
+      const selected = menuItems.find(item => item.id === id);
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      cart.push(selected);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      alert(selected.name + " added to cart!");
+    }
+  </script>
+</body>
+</html>
