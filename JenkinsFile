@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+    
+    environment {
+        DOCKER_IMAGE = "foodmealhub"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo "Fetching code from GitHub..."
+                git 'https://github.com/mrudula-hingmire/food_order_system.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    echo "Building Docker image..."
+                    sh 'docker build -t ${DOCKER_IMAGE}:latest .'
+                }
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                script {
+                    echo "Running container..."
+                    sh '''
+                    docker stop ${DOCKER_IMAGE} || true
+                    docker rm ${DOCKER_IMAGE} || true
+                    docker run -d -p 8081:80 --name ${DOCKER_IMAGE} ${DOCKER_IMAGE}:latest
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ Deployment Successful! Visit http://localhost:8081"
+        }
+        failure {
+            echo "❌ Build failed! Check logs."
+        }
+    }
+}
